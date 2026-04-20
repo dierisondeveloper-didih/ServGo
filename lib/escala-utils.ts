@@ -30,6 +30,11 @@ export function isPlantao(data: Date, config: EscalaConfig): boolean {
   if (cicloTotal === 0) return false
   
   const primeiroPlantao = new Date(config.primeiroPlantao)
+  // Corrigir fuso: se veio como string ISO, o parse é UTC. Ajustar para local.
+  if (typeof config.primeiroPlantao === 'string') {
+    const parts = String(config.primeiroPlantao).split('T')[0].split('-')
+    primeiroPlantao.setFullYear(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]))
+  }
   primeiroPlantao.setHours(0, 0, 0, 0)
   
   const dataCheck = new Date(data)

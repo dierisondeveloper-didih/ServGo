@@ -128,7 +128,7 @@ function TelaConfiguracao({
       padrao: escala,
       periodos,
       horarioInicio: horario,
-      primeiroPlantao: new Date(primeiroPlantao),
+      primeiroPlantao: new Date(primeiroPlantao + 'T12:00:00'),
     })
   }
 
