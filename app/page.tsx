@@ -136,22 +136,24 @@ function TelaConfiguracao({
 
   return (
     <div className="min-h-screen bg-slate-100 flex justify-center">
-      <div className="w-full max-w-[430px] min-h-screen bg-white flex flex-col">
+      <div className="w-full max-w-[430px] min-h-screen bg-white flex flex-col shadow-2xl shadow-slate-200/50">
         {/* Header */}
-        <div className="bg-[#1B4F72] text-white px-4 py-6">
-          {!configAtual && (
-            <div className="flex justify-center mb-3">
-              <img src="/logo-servgo.png" alt="ServGo" width={80} height={80} />
-            </div>
-          )}
-          {configAtual && (
-            <h1 className="text-xl font-bold">Editar Escala</h1>
-          )}
-          <p className="text-blue-100 text-sm mt-1">
-            {configAtual
-              ? 'Altere suas configurações'
-              : 'Configure sua escala de plantão'}
-          </p>
+        <div className="bg-gradient-to-br from-[#1B3A5C] via-[#1E4D78] to-[#163050] text-white px-4 py-8 relative overflow-hidden">
+          {/* Efeito sutil de brilho no fundo */}
+          <div className="absolute top-0 right-0 w-40 h-40 bg-[#E67E22] opacity-[0.07] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#F39C12] opacity-[0.05] rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+
+          {/* Logo grande e centralizada */}
+          <div className="flex flex-col items-center gap-3 relative z-10">
+            <img
+              src="/logo-servgo.png"
+              alt="ServGo"
+              className="w-72 h-72 object-contain drop-shadow-xl"
+            />
+            <p className="text-blue-200/80 text-sm tracking-wide">
+              {configAtual ? 'Altere suas configurações' : 'Configure sua escala de plantão'}
+            </p>
+          </div>
         </div>
 
         <div className="flex-1 p-4 flex flex-col gap-6 overflow-auto">
@@ -165,10 +167,10 @@ function TelaConfiguracao({
                 <button
                   key={e.label}
                   onClick={() => handleSelectEscala(e.label)}
-                  className={`p-4 rounded-xl border-2 text-center transition-all ${
+                  className={`p-4 rounded-2xl border-2 text-center transition-all duration-200 ${
                     escala === e.label
-                      ? 'border-[#E67E22] bg-orange-50 text-[#E67E22]'
-                      : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                      ? 'border-[#E67E22] bg-gradient-to-br from-orange-50 to-amber-50 text-[#D35400] shadow-sm shadow-orange-100'
+                      : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:shadow-sm active:scale-[0.98]'
                   }`}
                 >
                   <span className="text-lg font-bold">{e.label}</span>
@@ -178,9 +180,9 @@ function TelaConfiguracao({
               {/* Botão para escala personalizada */}
               <button
                 onClick={() => setShowCustom(true)}
-                className={`p-4 rounded-xl border-2 text-center transition-all flex flex-col items-center justify-center gap-1 ${
+                className={`p-4 rounded-2xl border-2 text-center transition-all duration-200 flex flex-col items-center justify-center gap-1 ${
                   !isPredefinida && escala
-                    ? 'border-[#E67E22] bg-orange-50 text-[#E67E22]'
+                    ? 'border-[#E67E22] bg-gradient-to-br from-orange-50 to-amber-50 text-[#D35400] shadow-sm shadow-orange-100'
                     : 'border-dashed border-slate-300 bg-slate-50 text-slate-500 hover:border-slate-400'
                 }`}
               >
@@ -198,7 +200,7 @@ function TelaConfiguracao({
 
           {/* Modal de escala personalizada */}
           {showCustom && (
-            <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200">
               <label className="block text-sm font-medium text-slate-700 mb-2">
                 Digite sua escala
               </label>
@@ -213,7 +215,7 @@ function TelaConfiguracao({
                   setCustomError('')
                 }}
                 placeholder="Ex: 12x24x12x72"
-                className="w-full p-3 border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#E67E22] font-mono"
+                className="w-full p-3.5 border border-slate-200 rounded-2xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#E67E22]/30 focus:border-[#E67E22] transition-all duration-200 bg-white font-mono"
               />
               {customError && (
                 <p className="text-red-500 text-xs mt-2">{customError}</p>
@@ -225,14 +227,14 @@ function TelaConfiguracao({
                     setCustomInput('')
                     setCustomError('')
                   }}
-                  className="flex-1 py-2 rounded-lg text-slate-600 hover:bg-slate-100"
+                  className="flex-1 py-2 rounded-xl text-slate-600 hover:bg-slate-100"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleCustomEscala}
                   disabled={!customInput}
-                  className="flex-1 py-2 rounded-lg bg-[#E67E22] text-white font-medium disabled:opacity-50"
+                  className="flex-1 py-2 rounded-xl bg-[#E67E22] text-white font-medium disabled:opacity-50"
                 >
                   Confirmar
                 </button>
@@ -242,16 +244,16 @@ function TelaConfiguracao({
 
           {/* Visualização da escala selecionada */}
           {periodos.length > 0 && (
-            <div className="bg-blue-50 rounded-xl p-4 border border-orange-200">
-              <p className="text-xs text-[#1B4F72] font-medium mb-2">Sua escala:</p>
+            <div className="bg-gradient-to-r from-blue-50/80 to-orange-50/40 rounded-2xl p-4 border border-blue-100/60">
+              <p className="text-xs text-[#1B3A5C] font-semibold mb-2 uppercase tracking-wide">Sua escala:</p>
               <div className="flex flex-wrap gap-2">
                 {periodos.map((p, i) => (
                   <span
                     key={i}
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-all ${
                       p.tipo === 'trabalho'
-                        ? 'bg-[#E67E22] text-white'
-                        : 'bg-slate-200 text-slate-600'
+                        ? 'bg-gradient-to-r from-[#E67E22] to-[#D35400] text-white shadow-sm'
+                        : 'bg-slate-200/80 text-slate-600'
                     }`}
                   >
                     {p.horas}h {p.tipo === 'trabalho' ? 'trabalho' : 'folga'}
@@ -270,7 +272,7 @@ function TelaConfiguracao({
               type="date"
               value={primeiroPlantao}
               onChange={(e) => setPrimeiroPlantao(e.target.value)}
-              className="w-full p-3 border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#E67E22]"
+              className="w-full p-3.5 border border-slate-200 rounded-2xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#E67E22]/30 focus:border-[#E67E22] transition-all duration-200 bg-white"
             />
           </div>
 
@@ -283,7 +285,7 @@ function TelaConfiguracao({
               type="time"
               value={horario}
               onChange={(e) => setHorario(e.target.value)}
-              className="w-full p-3 border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#E67E22]"
+              className="w-full p-3.5 border border-slate-200 rounded-2xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#E67E22]/30 focus:border-[#E67E22] transition-all duration-200 bg-white"
             />
           </div>
 
@@ -295,9 +297,9 @@ function TelaConfiguracao({
             <button
               onClick={handleSalvar}
               disabled={!escala || periodos.length === 0}
-              className={`w-full py-4 rounded-xl font-semibold transition-all ${
+              className={`w-full py-4 rounded-2xl font-semibold transition-all duration-300 ${
                 escala && periodos.length > 0
-                  ? 'bg-[#E67E22] text-white hover:bg-[#D35400]'
+                  ? 'bg-gradient-to-r from-[#E67E22] to-[#D35400] text-white hover:shadow-lg hover:shadow-orange-200/50 active:scale-[0.99]'
                   : 'bg-slate-200 text-slate-400 cursor-not-allowed'
               }`}
             >
@@ -308,13 +310,13 @@ function TelaConfiguracao({
               <>
                 <button
                   onClick={onCancelar}
-                  className="w-full py-3 rounded-xl font-medium text-slate-600 hover:bg-slate-100"
+                  className="w-full py-3 rounded-2xl font-medium text-slate-600 hover:bg-slate-100"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={onReset}
-                  className="w-full py-3 rounded-xl font-medium text-red-500 hover:bg-red-50 flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-2xl font-medium text-red-500 hover:bg-red-50 flex items-center justify-center gap-2"
                 >
                   <RefreshCw className="w-4 h-4" />
                   Resetar Configuração
@@ -326,16 +328,18 @@ function TelaConfiguracao({
 
         {/* Premium Banner */}
         <div className="px-4 pb-6">
-          <div className="bg-gradient-to-r from-blue-100 to-[#FDE8D0] rounded-xl p-4 flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#E67E22] rounded-full flex items-center justify-center">
-              <Crown className="w-5 h-5 text-white" />
+          <div className="bg-gradient-to-r from-[#1B3A5C] to-[#2C5F8A] rounded-2xl p-4 flex items-center gap-4 shadow-lg shadow-blue-900/10 border border-white/5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-[#E67E22] opacity-[0.08] rounded-full blur-2xl" />
+            <div className="w-12 h-12 bg-gradient-to-br from-[#E67E22] to-[#F39C12] rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20 relative z-10">
+              <Crown className="w-6 h-6 text-white" />
             </div>
-            <div className="flex-1">
-              <p className="font-semibold text-[#1B4F72]">Versão Premium</p>
-              <p className="text-xs text-orange-700">
+            <div className="flex-1 relative z-10">
+              <p className="font-semibold text-white text-[15px]">Versão Premium</p>
+              <p className="text-xs text-blue-200/70 mt-0.5">
                 Extras, permutas e mais. Em breve!
               </p>
             </div>
+            <ChevronRight className="w-5 h-5 text-blue-300/50 relative z-10" />
           </div>
         </div>
       </div>
@@ -397,53 +401,63 @@ function TelaCalendario({
 
   return (
     <div className="min-h-screen bg-slate-100 flex justify-center">
-      <div className="w-full max-w-[430px] min-h-screen bg-white flex flex-col">
+      <div className="w-full max-w-[430px] min-h-screen bg-white flex flex-col shadow-2xl shadow-slate-200/50">
         {/* Header com info do próximo plantão */}
-        <div className="bg-[#1B4F72] text-white px-4 pt-6 pb-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <img src="/logo-servgo.png" alt="ServGo" width={36} height={36} />
-              <p className="text-blue-200 text-xs uppercase tracking-wide">
-                Escala {config.padrao}
-              </p>
+        <div className="bg-gradient-to-br from-[#1B3A5C] via-[#1E4D78] to-[#163050] text-white px-4 pt-5 pb-4 relative overflow-hidden">
+          {/* Brilho sutil */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#E67E22] opacity-[0.06] rounded-full blur-3xl" />
+
+          <div className="flex items-center justify-between mb-4 relative z-10">
+            <div className="flex items-center gap-3">
+              <img
+                src="/logo-servgo.png"
+                alt="ServGo"
+                className="w-20 h-20 object-contain drop-shadow-md"
+              />
+              <div>
+                <p className="text-blue-300/70 text-xs uppercase tracking-widest">
+                  Escala {config.padrao}
+                </p>
+                <h1 className="text-lg font-bold tracking-tight">ServGo</h1>
+              </div>
             </div>
             <button
               onClick={onOpenConfig}
-              className="w-10 h-10 rounded-full bg-[#E67E22] flex items-center justify-center hover:bg-[#E67E22] transition-colors"
+              className="w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-all duration-300 border border-white/10"
             >
               <Settings className="w-5 h-5" />
             </button>
           </div>
 
           {/* Card próximo plantão */}
-          <div className="bg-[#164262] rounded-xl p-4">
-            <p className="text-blue-200 text-xs mb-1">Próximo plantão</p>
-            <p className="font-semibold capitalize">{formatarData(proximo)}</p>
-            <p className="text-blue-200 text-sm mt-1">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10 relative z-10">
+            <p className="text-blue-200/70 text-xs mb-1 uppercase tracking-wide">Próximo plantão</p>
+            <p className="font-semibold capitalize text-[15px]">{formatarData(proximo)}</p>
+            <p className="text-blue-200/70 text-sm mt-1">
               Entrada às {config.horarioInicio}
             </p>
           </div>
         </div>
 
         {/* Navegação do mês */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+        <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-slate-100/80">
           <button
             onClick={() => navegarMes(-1)}
-            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100"
+            className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100 transition-all duration-200 active:scale-95"
           >
-            <ChevronLeft className="w-5 h-5 text-slate-600" />
+            <ChevronLeft className="w-5 h-5 text-slate-500" />
           </button>
           <button
             onClick={irParaHoje}
-            className="font-semibold text-slate-800 capitalize hover:text-[#1B4F72] transition-colors"
+            className="font-semibold text-slate-800 capitalize hover:text-[#E67E22] transition-colors duration-200 text-[15px]"
           >
             {nomeMes}
           </button>
           <button
             onClick={() => navegarMes(1)}
-            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100"
+            className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100 transition-all duration-200 active:scale-95"
           >
-            <ChevronRight className="w-5 h-5 text-slate-600" />
+            <ChevronRight className="w-5 h-5 text-slate-500" />
           </button>
         </div>
 
@@ -466,19 +480,19 @@ function TelaCalendario({
             {diasCalendario.map((dia, i) => (
               <div
                 key={i}
-                className={`aspect-square flex items-center justify-center rounded-full text-sm relative ${
+                className={`aspect-square flex items-center justify-center rounded-2xl text-sm relative transition-all duration-200 ${
                   !dia.isCurrentMonth
                     ? 'text-slate-300'
                     : dia.isPlantao
-                    ? 'bg-[#E67E22] text-white font-semibold'
-                    : 'text-slate-700'
+                    ? 'bg-gradient-to-br from-[#E67E22] to-[#D35400] text-white font-semibold shadow-sm shadow-orange-200/50'
+                    : 'text-slate-700 hover:bg-slate-50'
                 } ${
                   dia.isToday && !dia.isPlantao
-                    ? 'ring-2 ring-[#E67E22] ring-offset-2'
+                    ? 'ring-2 ring-[#E67E22] ring-offset-2 font-semibold'
                     : ''
                 } ${
                   dia.isToday && dia.isPlantao
-                    ? 'ring-2 ring-white ring-offset-2 ring-offset-[#E67E22]'
+                    ? 'ring-2 ring-white ring-offset-2 ring-offset-[#E67E22] scale-110'
                     : ''
                 }`}
               >
@@ -489,31 +503,33 @@ function TelaCalendario({
         </div>
 
         {/* Resumo do mês */}
-        <div className="px-4 py-4 border-t border-slate-100">
-          <div className="bg-slate-50 rounded-xl p-4 flex items-center justify-between">
+        <div className="px-4 py-4 border-t border-slate-100/80">
+          <div className="bg-gradient-to-r from-slate-50 to-orange-50/30 rounded-2xl p-4 flex items-center justify-between border border-slate-100/60">
             <div>
               <p className="text-sm text-slate-500">Plantões neste mês</p>
-              <p className="text-2xl font-bold text-slate-800">{plantoesMes}</p>
+              <p className="text-3xl font-bold text-slate-800 mt-1">{plantoesMes}</p>
             </div>
-            <div className="flex gap-1">
-              <div className="w-3 h-3 rounded-full bg-[#E67E22]" />
-              <span className="text-xs text-slate-500">= Plantão</span>
+            <div className="flex items-center gap-2">
+              <div className="w-3.5 h-3.5 rounded-md bg-gradient-to-br from-[#E67E22] to-[#D35400] shadow-sm" />
+              <span className="text-xs text-slate-500 font-medium">= Plantão</span>
             </div>
           </div>
         </div>
 
         {/* Premium Banner */}
         <div className="px-4 pb-6">
-          <div className="bg-gradient-to-r from-blue-100 to-[#FDE8D0] rounded-xl p-4 flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#E67E22] rounded-full flex items-center justify-center">
-              <Crown className="w-5 h-5 text-white" />
+          <div className="bg-gradient-to-r from-[#1B3A5C] to-[#2C5F8A] rounded-2xl p-4 flex items-center gap-4 shadow-lg shadow-blue-900/10 border border-white/5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-[#E67E22] opacity-[0.08] rounded-full blur-2xl" />
+            <div className="w-12 h-12 bg-gradient-to-br from-[#E67E22] to-[#F39C12] rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20 relative z-10">
+              <Crown className="w-6 h-6 text-white" />
             </div>
-            <div className="flex-1">
-              <p className="font-semibold text-[#1B4F72]">Controle Financeiro</p>
-              <p className="text-xs text-orange-700">
+            <div className="flex-1 relative z-10">
+              <p className="font-semibold text-white text-[15px]">Controle Financeiro</p>
+              <p className="text-xs text-blue-200/70 mt-0.5">
                 Extras, permutas e relatórios. Em breve!
               </p>
             </div>
+            <ChevronRight className="w-5 h-5 text-blue-300/50 relative z-10" />
           </div>
         </div>
       </div>
