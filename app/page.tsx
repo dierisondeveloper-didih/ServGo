@@ -355,11 +355,11 @@ function TelaCalendario({
 
                 if (dia.isPlantao) {
                   bgClass   = isSpecial
-                    ? 'bg-gradient-to-br from-[#C5993A] to-[#B8860B]'
+                    ? 'bg-gradient-to-br from-[#E25028] to-[#BE3A14]'
                     : 'bg-[#D4872C]'
                   textClass = 'text-white font-semibold'
                   ringClass = dia.isToday
-                    ? `ring-2 ring-white ring-offset-1 ${isSpecial ? 'ring-offset-[#C5993A]' : 'ring-offset-[#D4872C]'}`
+                    ? `ring-2 ring-white ring-offset-1 ${isSpecial ? 'ring-offset-[#E25028]' : 'ring-offset-[#D4872C]'}`
                     : ''
                 } else {
                   textClass = isSpecial ? 'text-[#C5993A]' : 'text-[#2C3E50]'
@@ -392,7 +392,7 @@ function TelaCalendario({
                 <span className="text-[10px] text-[#6B7280]">Plantão</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded-md bg-gradient-to-br from-[#C5993A] to-[#B8860B]" />
+                <div className="w-3 h-3 rounded-md bg-gradient-to-br from-[#E25028] to-[#BE3A14]" />
                 <span className="text-[10px] text-[#6B7280]">Plantão feriado/fim sem.</span>
               </div>
               <div className="flex items-center gap-1.5">
