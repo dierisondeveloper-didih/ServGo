@@ -19,6 +19,9 @@ export interface DiaCalendario {
   isPlantao: boolean
   isCurrentMonth: boolean
   isToday: boolean
+  isFeriado: boolean
+  nomeFeriado?: string
+  isFimDeSemana: boolean
 }
 
 // Escalas pré-definidas com seus padrões
