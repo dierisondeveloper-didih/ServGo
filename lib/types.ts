@@ -24,61 +24,49 @@ export interface DiaCalendario {
   isFimDeSemana: boolean
 }
 
-// Escalas pré-definidas com seus padrões
+// Interface para extras/bicos adicionados pelo usuário
+export interface ExtraServico {
+  id: string
+  data: string // ISO date string (YYYY-MM-DD)
+  tipo: string // "Extra", "Emergência", "Segurança Particular", etc.
+  descricao: string
+  horas: number
+  valor: number
+}
+
+// Configuração financeira
+export interface ConfigFinanceira {
+  valorPlantaoDiaUtil: number
+  valorPlantaoFimDeSemana: number
+  valorPlantaoFeriado: number
+  valorHoraExtra: number
+}
+
+// Escalas pré-definidas com seus padrões (3 principais)
 export const ESCALAS_PREDEFINIDAS: Array<{
   label: string
   periodos: PeriodoEscala[]
 }> = [
-  { 
-    label: '24x72', 
+  {
+    label: '24x72',
     periodos: [
       { horas: 24, tipo: 'trabalho' },
-      { horas: 72, tipo: 'folga' }
-    ]
+      { horas: 72, tipo: 'folga' },
+    ],
   },
-  { 
-    label: '12x36', 
+  {
+    label: '12x36',
     periodos: [
       { horas: 12, tipo: 'trabalho' },
-      { horas: 36, tipo: 'folga' }
-    ]
+      { horas: 36, tipo: 'folga' },
+    ],
   },
-  { 
-    label: '12x48', 
-    periodos: [
-      { horas: 12, tipo: 'trabalho' },
-      { horas: 48, tipo: 'folga' }
-    ]
-  },
-  { 
-    label: '24x48', 
+  {
+    label: '24x48',
     periodos: [
       { horas: 24, tipo: 'trabalho' },
-      { horas: 48, tipo: 'folga' }
-    ]
-  },
-  { 
-    label: '12x24x12x72', 
-    periodos: [
-      { horas: 12, tipo: 'trabalho' },
-      { horas: 24, tipo: 'folga' },
-      { horas: 12, tipo: 'trabalho' },
-      { horas: 72, tipo: 'folga' }
-    ]
-  },
-  { 
-    label: '6x1', 
-    periodos: [
-      { horas: 144, tipo: 'trabalho' }, // 6 dias = 144h
-      { horas: 24, tipo: 'folga' }      // 1 dia = 24h
-    ]
-  },
-  { 
-    label: '5x2', 
-    periodos: [
-      { horas: 120, tipo: 'trabalho' }, // 5 dias = 120h
-      { horas: 48, tipo: 'folga' }      // 2 dias = 48h
-    ]
+      { horas: 48, tipo: 'folga' },
+    ],
   },
 ] as const
 

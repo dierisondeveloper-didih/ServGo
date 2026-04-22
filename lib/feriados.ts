@@ -15,7 +15,7 @@ function calcularPascoa(ano: number): Date {
   const m = Math.floor((a + 11 * h + 22 * l) / 451)
   const month = Math.floor((h + l - 7 * m + 114) / 31)
   const day = ((h + l - 7 * m + 114) % 31) + 1
-  return new Date(ano, month - 1, day)
+  return new Date(ano, month - 1, day, 12, 0, 0)
 }
 
 const FERIADOS_FIXOS = [
@@ -33,6 +33,7 @@ const FERIADOS_FIXOS = [
 function addDias(base: Date, dias: number): Date {
   const d = new Date(base)
   d.setDate(d.getDate() + dias)
+  d.setHours(12, 0, 0, 0)
   return d
 }
 
@@ -40,7 +41,7 @@ export function getFeriadosAno(ano: number): Array<{ data: Date; nome: string }>
   const feriados: Array<{ data: Date; nome: string }> = []
 
   for (const f of FERIADOS_FIXOS) {
-    feriados.push({ data: new Date(ano, f.mes - 1, f.dia), nome: f.nome })
+    feriados.push({ data: new Date(ano, f.mes - 1, f.dia, 12, 0, 0), nome: f.nome })
   }
 
   const pascoa = calcularPascoa(ano)

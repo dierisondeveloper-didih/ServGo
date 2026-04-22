@@ -25,19 +25,20 @@ export function isPlantao(data: Date, config: EscalaConfig): boolean {
   const cicloTotal = cicloDias.length
   if (cicloTotal === 0) return false
 
-  const primeiroPlantao = new Date(config.primeiroPlantao)
-  // Corrigir fuso: se veio como string ISO, o parse é UTC. Ajustar para local.
+  let primeiroPlantao: Date
   if (typeof config.primeiroPlantao === 'string') {
     const parts = String(config.primeiroPlantao).split('T')[0].split('-')
-    primeiroPlantao.setFullYear(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]))
+    primeiroPlantao = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]), 12, 0, 0)
+  } else {
+    primeiroPlantao = new Date(config.primeiroPlantao)
+    primeiroPlantao.setHours(12, 0, 0, 0)
   }
-  primeiroPlantao.setHours(0, 0, 0, 0)
 
   const dataCheck = new Date(data)
-  dataCheck.setHours(0, 0, 0, 0)
+  dataCheck.setHours(12, 0, 0, 0)
 
   const diffTime = dataCheck.getTime() - primeiroPlantao.getTime()
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24))
 
   let posicaoNoCiclo = diffDays % cicloTotal
   if (posicaoNoCiclo < 0) posicaoNoCiclo += cicloTotal
@@ -55,10 +56,12 @@ export function gerarCalendarioMes(
 ): DiaCalendario[] {
   const dias: DiaCalendario[] = []
   const hoje = new Date()
-  hoje.setHours(0, 0, 0, 0)
+  const todayYear = hoje.getFullYear()
+  const todayMonth = hoje.getMonth()
+  const todayDate = hoje.getDate()
 
-  const primeiroDia = new Date(ano, mes, 1)
-  const ultimoDia   = new Date(ano, mes + 1, 0)
+  const primeiroDia = new Date(ano, mes, 1, 12, 0, 0)
+  const ultimoDia   = new Date(ano, mes + 1, 0, 12, 0, 0)
 
   const makeDia = (data: Date, isCurrentMonth: boolean): DiaCalendario => {
     const feriadoInfo = isFeriado(data)
@@ -67,7 +70,10 @@ export function gerarCalendarioMes(
       dia: data.getDate(),
       isPlantao: isPlantao(data, config),
       isCurrentMonth,
-      isToday: data.getTime() === hoje.getTime(),
+      isToday:
+        data.getDate()     === todayDate  &&
+        data.getMonth()    === todayMonth &&
+        data.getFullYear() === todayYear,
       isFeriado: feriadoInfo.is,
       nomeFeriado: feriadoInfo.nome,
       isFimDeSemana: isFimDeSemana(data),
@@ -77,18 +83,18 @@ export function gerarCalendarioMes(
   // Dias do mês anterior para completar a semana inicial
   const diaSemanaInicio = primeiroDia.getDay()
   for (let i = diaSemanaInicio - 1; i >= 0; i--) {
-    dias.push(makeDia(new Date(ano, mes, -i), false))
+    dias.push(makeDia(new Date(ano, mes, -i, 12, 0, 0), false))
   }
 
   // Dias do mês atual
   for (let dia = 1; dia <= ultimoDia.getDate(); dia++) {
-    dias.push(makeDia(new Date(ano, mes, dia), true))
+    dias.push(makeDia(new Date(ano, mes, dia, 12, 0, 0), true))
   }
 
   // Dias do próximo mês para completar 42 células
   const diasRestantes = 42 - dias.length
   for (let i = 1; i <= diasRestantes; i++) {
-    dias.push(makeDia(new Date(ano, mes + 1, i), false))
+    dias.push(makeDia(new Date(ano, mes + 1, i, 12, 0, 0), false))
   }
 
   return dias
@@ -99,10 +105,8 @@ export function gerarCalendarioMes(
  */
 export function proximoPlantao(config: EscalaConfig): Date {
   const hoje = new Date()
-  hoje.setHours(0, 0, 0, 0)
   for (let i = 0; i < 365; i++) {
-    const data = new Date(hoje)
-    data.setDate(data.getDate() + i)
+    const data = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + i, 12, 0, 0)
     if (isPlantao(data, config)) return data
   }
   return hoje
@@ -113,10 +117,8 @@ export function proximoPlantao(config: EscalaConfig): Date {
  */
 export function contarPlantoes(inicio: Date, fim: Date, config: EscalaConfig): number {
   let count = 0
-  const current = new Date(inicio)
-  current.setHours(0, 0, 0, 0)
-  const end = new Date(fim)
-  end.setHours(0, 0, 0, 0)
+  const current = new Date(inicio.getFullYear(), inicio.getMonth(), inicio.getDate(), 12, 0, 0)
+  const end     = new Date(fim.getFullYear(),   fim.getMonth(),   fim.getDate(),   12, 0, 0)
   while (current <= end) {
     if (isPlantao(current, config)) count++
     current.setDate(current.getDate() + 1)
@@ -129,10 +131,8 @@ export function contarPlantoes(inicio: Date, fim: Date, config: EscalaConfig): n
  */
 export function contarPlantoesFeriado(inicio: Date, fim: Date, config: EscalaConfig): number {
   let count = 0
-  const current = new Date(inicio)
-  current.setHours(0, 0, 0, 0)
-  const end = new Date(fim)
-  end.setHours(0, 0, 0, 0)
+  const current = new Date(inicio.getFullYear(), inicio.getMonth(), inicio.getDate(), 12, 0, 0)
+  const end     = new Date(fim.getFullYear(),   fim.getMonth(),   fim.getDate(),   12, 0, 0)
   while (current <= end) {
     if (isPlantao(current, config) && (isFimDeSemana(current) || isFeriado(current).is)) {
       count++
