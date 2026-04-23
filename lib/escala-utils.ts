@@ -3,15 +3,22 @@
 import type { EscalaConfig, DiaCalendario, PeriodoEscala } from './types'
 import { isFeriado, isFimDeSemana } from './feriados'
 
-/**
- * Retorna os blocos contínuos de trabalho para um dia específico.
- * Ex: [{ inicio: 7, fim: 19 }] para um plantão diurno 12h.
- */
-export function getHorarioPlantao(data: Date, config: EscalaConfig): Array<{ inicio: number; fim: number }> {
+export function isPlantao(data: Date, config: EscalaConfig): boolean {
   const periodos = config.periodos
-  const cicloTotal = periodos.reduce((sum, p) => sum + p.horas, 0)
+  if (periodos.length === 0) return false
 
-  if (cicloTotal === 0) return []
+  // Converter períodos em blocos de 12h
+  // Cada bloco é "trabalho" ou "folga"
+  const blocos12h: Array<'trabalho' | 'folga'> = []
+  for (const periodo of periodos) {
+    const qtdBlocos = Math.round(periodo.horas / 12)
+    for (let i = 0; i < qtdBlocos; i++) {
+      blocos12h.push(periodo.tipo)
+    }
+  }
+
+  const totalBlocos = blocos12h.length
+  if (totalBlocos === 0) return false
 
   const [horaInicio] = config.horarioInicio.split(':').map(Number)
 
@@ -24,57 +31,91 @@ export function getHorarioPlantao(data: Date, config: EscalaConfig): Array<{ ini
   const diffMs = dataCheck.getTime() - primeiroPlantao.getTime()
   const diffDias = Math.round(diffMs / (1000 * 60 * 60 * 24))
 
-  // O "dia de trabalho" do usuário vai de horaInicio até horaInicio+24
-  // Então checamos as 24 horas a partir do horário de entrada
-  const horasDesdeInicio = diffDias * 24
+  // Cada dia tem 2 blocos de 12h
+  // Se entrada é de manhã (antes das 12h): bloco 0 = manhã, bloco 1 = noite
+  // Se entrada é de noite (12h+): bloco 0 = noite, bloco 1 = manhã seguinte
+  const blocoInicial = diffDias * 2
 
-  const horasTrabalho: boolean[] = new Array(24).fill(false)
-
-  for (let h = 0; h < 24; h++) {
-    // h=0 corresponde ao horário de entrada (ex: 07:00)
-    // h=1 corresponde a 08:00, etc.
-    const horaAbsoluta = horasDesdeInicio + h
-
-    let posicao = horaAbsoluta % cicloTotal
-    if (posicao < 0) posicao += cicloTotal
-
-    let acumulado = 0
-    for (const periodo of periodos) {
-      if (posicao >= acumulado && posicao < acumulado + periodo.horas) {
-        if (periodo.tipo === 'trabalho') {
-          // Converter de volta para hora do relógio
-          const horaRelogio = (horaInicio + h) % 24
-          horasTrabalho[horaRelogio] = true
-        }
-        break
-      }
-      acumulado += periodo.horas
-    }
+  // Verificar se algum dos 2 blocos deste dia é trabalho
+  for (let b = 0; b < 2; b++) {
+    let pos = (blocoInicial + b) % totalBlocos
+    if (pos < 0) pos += totalBlocos
+    if (blocos12h[pos] === 'trabalho') return true
   }
 
-  // Agrupar em blocos contínuos
-  const blocos: Array<{ inicio: number; fim: number }> = []
-  let inicioBloco = -1
-
-  for (let h = 0; h <= 24; h++) {
-    if (h < 24 && horasTrabalho[h]) {
-      if (inicioBloco === -1) inicioBloco = h
-    } else {
-      if (inicioBloco !== -1) {
-        blocos.push({ inicio: inicioBloco, fim: h })
-        inicioBloco = -1
-      }
-    }
-  }
-
-  return blocos
+  return false
 }
 
-/**
- * Calcula se uma data específica é dia de plantão
- */
-export function isPlantao(data: Date, config: EscalaConfig): boolean {
-  return getHorarioPlantao(data, config).length > 0
+export function getHorarioPlantao(data: Date, config: EscalaConfig): Array<{ inicio: number; fim: number }> {
+  const periodos = config.periodos
+  if (periodos.length === 0) return []
+
+  const blocos12h: Array<'trabalho' | 'folga'> = []
+  for (const periodo of periodos) {
+    const qtdBlocos = Math.round(periodo.horas / 12)
+    for (let i = 0; i < qtdBlocos; i++) {
+      blocos12h.push(periodo.tipo)
+    }
+  }
+
+  const totalBlocos = blocos12h.length
+  if (totalBlocos === 0) return []
+
+  const [horaInicio] = config.horarioInicio.split(':').map(Number)
+
+  const primeiroPlantao = new Date(config.primeiroPlantao)
+  primeiroPlantao.setHours(12, 0, 0, 0)
+
+  const dataCheck = new Date(data)
+  dataCheck.setHours(12, 0, 0, 0)
+
+  const diffMs = dataCheck.getTime() - primeiroPlantao.getTime()
+  const diffDias = Math.round(diffMs / (1000 * 60 * 60 * 24))
+
+  const blocoInicial = diffDias * 2
+  const resultado: Array<{ inicio: number; fim: number }> = []
+
+  // Bloco 0 do dia: começa no horário de entrada, dura 12h
+  let pos0 = (blocoInicial) % totalBlocos
+  if (pos0 < 0) pos0 += totalBlocos
+
+  // Bloco 1 do dia: começa 12h depois, dura 12h
+  let pos1 = (blocoInicial + 1) % totalBlocos
+  if (pos1 < 0) pos1 += totalBlocos
+
+  const inicioBloco0 = horaInicio
+  const fimBloco0 = (horaInicio + 12) % 24
+  const inicioBloco1 = fimBloco0
+  const fimBloco1 = horaInicio
+
+  if (blocos12h[pos0] === 'trabalho' && blocos12h[pos1] === 'trabalho') {
+    // Ambos os blocos são trabalho = 24h
+    if (horaInicio === 0) {
+      resultado.push({ inicio: 0, fim: 24 })
+    } else {
+      resultado.push({ inicio: horaInicio, fim: 24 })
+      resultado.push({ inicio: 0, fim: horaInicio })
+    }
+  } else if (blocos12h[pos0] === 'trabalho') {
+    // Só o primeiro bloco
+    if (inicioBloco0 < fimBloco0) {
+      resultado.push({ inicio: inicioBloco0, fim: fimBloco0 })
+    } else {
+      // Cruza meia-noite
+      resultado.push({ inicio: inicioBloco0, fim: 24 })
+      resultado.push({ inicio: 0, fim: fimBloco0 })
+    }
+  } else if (blocos12h[pos1] === 'trabalho') {
+    // Só o segundo bloco
+    if (inicioBloco1 < fimBloco1 || fimBloco1 === 0) {
+      resultado.push({ inicio: inicioBloco1, fim: fimBloco1 === 0 ? 24 : fimBloco1 })
+    } else {
+      resultado.push({ inicio: inicioBloco1, fim: 24 })
+      resultado.push({ inicio: 0, fim: fimBloco1 })
+    }
+  }
+
+  return resultado
 }
 
 /**
