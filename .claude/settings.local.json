@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(cd \"C:\\\\Projetos_Dev\\\\ServGo\" && npx tsc --noEmit 2>&1 | head -60)",
-      "Bash(cd \"C:\\\\Projetos_Dev\\\\ServGo\" && npm run build 2>&1 | tail -30)"
+      "Bash(cd \"C:\\\\Projetos_Dev\\\\ServGo\" && npm run build 2>&1 | tail -30)",
+      "Bash(cd \"C:\\\\Projetos_Dev\\\\ServGo\" && npm run build 2>&1 | tail -20)",
+      "Bash(npm run:*)"
     ]
   }
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import {
-  ChevronLeft, ChevronRight, Settings, Plus, Check,
+  ChevronLeft, ChevronRight, ChevronDown, Settings, Plus, Check,
   Home, CalendarRange, CalendarDays, DollarSign, Star, Bell,
   ArrowLeft, FileText, Trash2, User, Clock, Heart,
 } from 'lucide-react'
@@ -226,52 +226,111 @@ function TelaBoasVindas({ onContinuar }: { onContinuar: (nome: string) => void }
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F5F0] flex flex-col items-center justify-center px-6">
-      <style>{`
-        @keyframes bvUp {
-          from { opacity: 0; transform: translateY(16px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        .bv-0 { animation: bvUp 0.8s ease-out forwards; }
-        .bv-1 { opacity: 0; animation: bvUp 0.8s ease-out 0.2s forwards; }
-        .bv-2 { opacity: 0; animation: bvUp 0.8s ease-out 0.4s forwards; }
-        .bv-3 { opacity: 0; animation: bvUp 0.8s ease-out 0.6s forwards; }
-      `}</style>
+    <div className="min-h-screen bg-[#F5F5F0] flex justify-center overflow-hidden">
+      <div className="w-full max-w-[430px] min-h-screen flex flex-col">
 
-      <div className="bv-0 flex flex-col items-center">
-        <img src="/logo-servgo.png" alt="ServGo" className="w-56 h-56 object-contain" />
-        <p className="bv-1 text-[#6B7280] text-sm tracking-wide mt-2">
-          Seu serviço, na palma da mão.
-        </p>
-      </div>
+        {/* ═══ SEÇÃO SUPERIOR — Fundo claro com logo ═══ */}
+        <div className="relative flex-shrink-0 overflow-hidden" style={{ background: 'linear-gradient(160deg, #ffffff 0%, #FAF8F5 50%, #F5F0E8 100%)', minHeight: '52vh' }}>
 
-      <div style={{ height: 40 }} />
+          {/* Orbs dourados suaves */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-[#C5993A] opacity-[0.06] rounded-full blur-[100px]" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4872C] opacity-[0.05] rounded-full blur-[80px] -translate-y-1/3 translate-x-1/4" />
+            <div className="absolute bottom-0 left-0 w-56 h-56 bg-[#C5993A] opacity-[0.04] rounded-full blur-[70px] translate-y-1/3 -translate-x-1/4" />
+          </div>
 
-      <div className="bv-2 w-full">
-        <p className="text-[#2C3E50] text-2xl font-bold">Bem Vindo!</p>
-        <p className="text-[#2C3E50] text-base mt-4">Vamos Começar, qual seu nome:</p>
-      </div>
+          {/* Conteúdo: logo + slogan */}
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 py-12">
 
-      <div className="bv-3 w-full mt-4">
-        <input
-          type="text"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleContinuar()}
-          placeholder="Digite seu nome"
-          className="w-full p-3.5 border border-slate-200 rounded-2xl text-[#2C3E50] focus:outline-none focus:ring-2 focus:ring-[#C5993A]/30 focus:border-[#C5993A] transition-all duration-200 bg-white"
-        />
-        <button
-          onClick={handleContinuar}
-          disabled={nome.trim().length < 2}
-          className={`w-full mt-4 py-4 rounded-2xl font-semibold transition-all duration-300 ${
-            nome.trim().length >= 2
-              ? 'bg-gradient-to-r from-[#C5993A] to-[#D4872C] text-white hover:shadow-lg hover:shadow-amber-200/50 active:scale-[0.99]'
-              : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-          }`}
-        >
-          Continuar
-        </button>
+            {/* Logo */}
+            <div
+              className="mb-5"
+              style={{ opacity: 0, animation: 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards' }}
+            >
+              <img
+                src="/logo-servgo.png"
+                alt="ServGo"
+                className="w-64 h-64 object-contain drop-shadow-sm"
+              />
+            </div>
+
+            {/* Slogan */}
+            <div
+              className="flex items-center gap-3"
+              style={{ opacity: 0, animation: 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards' }}
+            >
+              <div className="w-6 h-px bg-gradient-to-r from-transparent to-[#C5993A]/50" />
+              <p className="text-[#C5993A] text-[11px] tracking-[0.25em] uppercase font-semibold">
+                Seu serviço na palma da mão
+              </p>
+              <div className="w-6 h-px bg-gradient-to-l from-transparent to-[#C5993A]/50" />
+            </div>
+          </div>
+        </div>
+
+        {/* ═══ SEÇÃO INFERIOR — Form ═══ */}
+        <div className="flex-1 bg-[#F5F5F0] px-8 pb-8 pt-8 flex flex-col justify-between">
+
+          <div>
+            {/* Bem Vindo */}
+            <div
+              className="mb-8"
+              style={{ opacity: 0, animation: 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards' }}
+            >
+              <h1 className="text-[32px] font-bold text-[#2C3E50] leading-tight">Bem Vindo!</h1>
+              <p className="text-[#6B7280] text-[15px] mt-2">Para começarmos, digite o seu nome:</p>
+            </div>
+
+            {/* Input */}
+            <div
+              className="mb-6"
+              style={{ opacity: 0, animation: 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards' }}
+            >
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-[#C5993A]/0 via-[#C5993A]/20 to-[#D4872C]/0 rounded-[20px] blur-md opacity-0 group-focus-within:opacity-100 transition-all duration-700" />
+                <input
+                  type="text"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && nome.trim().length >= 2) handleContinuar() }}
+                  placeholder="Digite seu nome"
+                  className="relative w-full px-6 py-4 bg-white border-2 border-slate-200/80 rounded-2xl text-[#2C3E50] text-lg font-medium placeholder:text-slate-300 placeholder:font-normal focus:outline-none focus:border-[#C5993A] focus:shadow-xl focus:shadow-[#C5993A]/8 transition-all duration-500"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            {/* Botão */}
+            <div style={{ opacity: 0, animation: 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards' }}>
+              <button
+                onClick={handleContinuar}
+                disabled={nome.trim().length < 2}
+                className={`w-full py-4 rounded-2xl font-bold text-[16px] tracking-wide transition-all duration-500 ${
+                  nome.trim().length >= 2
+                    ? 'bg-gradient-to-r from-[#C5993A] via-[#D4872C] to-[#C5993A] text-white shadow-2xl shadow-[#C5993A]/30 active:scale-[0.97]'
+                    : 'bg-slate-200/60 text-slate-400 cursor-not-allowed'
+                }`}
+              >
+                Continuar
+              </button>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div
+            className="flex flex-col items-center gap-2 pt-6"
+            style={{ opacity: 0, animation: 'fadeIn 0.6s ease-out 1.5s forwards' }}
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-1 h-1 rounded-full bg-[#C5993A]/30" />
+              <div className="w-1 h-1 rounded-full bg-[#C5993A]/50" />
+              <div className="w-1 h-1 rounded-full bg-[#C5993A]/30" />
+            </div>
+            <p className="text-[10px] text-slate-400/60 tracking-[0.2em] uppercase font-medium">
+              por iVertice Digital
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -315,6 +374,9 @@ function TelaHome({
   const [showCustom,  setShowCustom]  = useState(false)
   const [customInput, setCustomInput] = useState('')
   const [customError, setCustomError] = useState('')
+
+  // ── Escala card ──
+  const [escalaExpanded, setEscalaExpanded] = useState(!config)
 
   // ── Extra modal state ──
   const [showExtraModal, setShowExtraModal] = useState(false)
@@ -409,6 +471,7 @@ function TelaHome({
       horarioInicio: horario,
       primeiroPlantao: new Date(primeiroPlantao + 'T12:00:00'),
     })
+    setEscalaExpanded(false)
   }
 
   const navegarMes = (dir: number) => {
@@ -453,126 +516,114 @@ function TelaHome({
         )}
       </div>
 
-      {/* ── CARD DE ESCALA ── */}
+      {/* ── CARD DE ESCALA — Recolhível ── */}
       <div className="px-4 mt-4">
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden animate-fadeInUp">
-          <div className="flex items-center gap-3 px-4 pt-4 pb-3 border-b border-slate-100">
-            <CalendarDays className="w-5 h-5 text-[#2C3E50]" />
-            <span className="font-semibold text-[#2C3E50]">Qual sua escala de serviço?</span>
-          </div>
 
-          <div className="px-4 py-3">
-            {/* 3 escalas predefinidas */}
-            <div className="grid grid-cols-3 gap-2 mb-3">
-              {ESCALAS_PREDEFINIDAS.map((e) => (
+          {/* Header clicável */}
+          <button
+            onClick={() => setEscalaExpanded(!escalaExpanded)}
+            className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50/50 transition-all"
+          >
+            <div className="flex items-center gap-3">
+              <CalendarDays className="w-5 h-5 text-[#2C3E50]" />
+              <div className="text-left">
+                <span className="font-semibold text-[#2C3E50] text-sm">
+                  {config ? `Escala ${config.padrao}` : 'Qual sua escala de serviço?'}
+                </span>
+                {config && !escalaExpanded && (
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Entrada às {config.horarioInicio} • Toque para alterar
+                  </p>
+                )}
+              </div>
+            </div>
+            <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${escalaExpanded ? 'rotate-180' : ''}`} />
+          </button>
+
+          {/* Conteúdo expansível */}
+          <div className={`transition-all duration-300 ease-in-out overflow-hidden ${escalaExpanded ? 'max-h-[700px] opacity-100' : 'max-h-0 opacity-0'}`}>
+            <div className="px-4 pb-4 border-t border-slate-100 pt-3">
+
+              {/* 3 escalas predefinidas */}
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                {ESCALAS_PREDEFINIDAS.map((e) => (
+                  <button
+                    key={e.label}
+                    onClick={() => handleSelectEscala(e.label)}
+                    className={`py-3 rounded-xl border-2 text-center transition-all duration-200 flex items-center justify-center gap-1 ${
+                      escala === e.label
+                        ? 'border-[#C5993A] bg-[#C5993A]/5 text-[#2C3E50] font-bold'
+                        : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                    }`}
+                  >
+                    <span className="text-sm font-semibold">{e.label}</span>
+                    {escala === e.label && (
+                      <span className="ml-1 inline-flex w-4 h-4 bg-[#C5993A] rounded-full items-center justify-center align-middle">
+                        <Check className="w-2.5 h-2.5 text-white" />
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Personalizada */}
+              <div className="flex justify-center mb-4">
                 <button
-                  key={e.label}
-                  onClick={() => handleSelectEscala(e.label)}
-                  className={`py-3 rounded-xl border-2 text-center transition-all duration-200 flex items-center justify-center gap-1 ${
-                    escala === e.label
-                      ? 'border-[#C5993A] bg-[#C5993A]/5 text-[#2C3E50] font-bold shadow-sm'
-                      : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                  onClick={() => setShowCustom(true)}
+                  className={`px-5 py-2 rounded-xl border-2 border-dashed text-sm font-medium transition-all ${
+                    !isPredefinida && escala
+                      ? 'border-[#C5993A] bg-[#C5993A]/5 text-[#2C3E50]'
+                      : 'border-slate-300 text-slate-500 hover:border-[#C5993A]/50 hover:text-[#C5993A]'
                   }`}
                 >
-                  <span className="text-sm font-semibold">{e.label}</span>
-                  {escala === e.label && (
-                    <span className="inline-flex w-4 h-4 bg-[#C5993A] rounded-full items-center justify-center shrink-0">
-                      <Check className="w-2.5 h-2.5 text-white" />
-                    </span>
-                  )}
+                  {!isPredefinida && escala ? `✓ ${escala}` : '+ Personalizada'}
                 </button>
-              ))}
-            </div>
-
-            {/* Botão Personalizada */}
-            <div className="flex justify-center mb-3">
-              <button
-                onClick={() => setShowCustom(true)}
-                className={`px-6 py-2.5 rounded-xl border-2 border-dashed text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
-                  !isPredefinida && escala
-                    ? 'border-[#C5993A] bg-[#C5993A]/5 text-[#2C3E50]'
-                    : 'border-slate-300 text-slate-500 hover:border-[#C5993A]/50 hover:text-[#C5993A]'
-                }`}
-              >
-                {!isPredefinida && escala ? (
-                  <>
-                    <Check className="w-4 h-4 text-[#C5993A]" />
-                    {escala}
-                  </>
-                ) : (
-                  <>
-                    <Plus className="w-4 h-4" />
-                    Personalizada
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* Custom escala input inline */}
-            {showCustom && (
-              <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-3">
-                <p className="text-sm font-medium text-[#2C3E50] mb-1">Digite sua escala</p>
-                <p className="text-xs text-slate-400 mb-3">Formato: trabalho x folga... Ex: 12x24x12x72</p>
-                <input
-                  type="text"
-                  value={customInput}
-                  onChange={(e) => {
-                    setCustomInput(e.target.value.replace(/[^0-9xX]/g, '').toLowerCase())
-                    setCustomError('')
-                  }}
-                  placeholder="Ex: 12x24x12x72"
-                  className="w-full p-3 border border-slate-200 rounded-xl text-[#2C3E50] font-mono focus:outline-none focus:ring-2 focus:ring-[#C5993A]/30 focus:border-[#C5993A] bg-white"
-                />
-                {customError && <p className="text-red-500 text-xs mt-1">{customError}</p>}
-                <div className="flex gap-2 mt-3">
-                  <button
-                    onClick={() => { setShowCustom(false); setCustomInput(''); setCustomError('') }}
-                    className="flex-1 py-2 rounded-xl text-slate-500 hover:bg-slate-100 text-sm"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    onClick={handleCustomEscala}
-                    disabled={!customInput}
-                    className="flex-1 py-2 rounded-xl bg-[#C5993A] text-white font-medium text-sm disabled:opacity-50"
-                  >
-                    Confirmar
-                  </button>
-                </div>
               </div>
-            )}
-          </div>
 
-          {/* Inputs de data e horário */}
-          <div className="px-4 pb-4 space-y-3">
-            <div>
-              <label className="text-xs text-slate-500 mb-1 block">Primeiro dia de serviço</label>
-              <input
-                type="date"
-                value={primeiroPlantao}
-                onChange={(e) => setPrimeiroPlantao(e.target.value)}
-                className="w-full p-3 border border-slate-200 rounded-xl text-[#2C3E50] focus:outline-none focus:ring-2 focus:ring-[#C5993A]/30 focus:border-[#C5993A] transition-all bg-white"
-              />
-            </div>
-            <div>
-              <label className="text-xs text-slate-500 mb-1 block">Horário de entrada</label>
-              <input
-                type="time"
-                value={horario}
-                onChange={(e) => setHorario(e.target.value)}
-                className="w-full p-3 border border-slate-200 rounded-xl text-[#2C3E50] focus:outline-none focus:ring-2 focus:ring-[#C5993A]/30 focus:border-[#C5993A] transition-all bg-white"
-              />
-            </div>
+              {/* Custom escala input */}
+              {showCustom && (
+                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-4">
+                  <p className="text-sm font-medium text-[#2C3E50] mb-1">Digite sua escala</p>
+                  <p className="text-xs text-slate-400 mb-3">Formato: trabalho x folga... Ex: 12x24x12x72</p>
+                  <input
+                    type="text"
+                    value={customInput}
+                    onChange={(e) => { setCustomInput(e.target.value.replace(/[^0-9xX]/g, '').toLowerCase()); setCustomError('') }}
+                    placeholder="Ex: 12x24x12x72"
+                    className="w-full p-3 border border-slate-200 rounded-xl text-[#2C3E50] font-mono focus:outline-none focus:ring-2 focus:ring-[#C5993A]/30 focus:border-[#C5993A] bg-white"
+                  />
+                  {customError && <p className="text-red-500 text-xs mt-1">{customError}</p>}
+                  <div className="flex gap-2 mt-3">
+                    <button onClick={() => { setShowCustom(false); setCustomInput(''); setCustomError('') }}
+                      className="flex-1 py-2 rounded-xl text-slate-500 hover:bg-slate-100 text-sm">Cancelar</button>
+                    <button onClick={handleCustomEscala} disabled={!customInput}
+                      className="flex-1 py-2 rounded-xl bg-[#C5993A] text-white font-medium text-sm disabled:opacity-50">Confirmar</button>
+                  </div>
+                </div>
+              )}
 
-            {configChanged && (
-              <button
-                onClick={handleSalvar}
-                disabled={!escala || periodos.length === 0}
-                className="w-full py-3 bg-gradient-to-r from-[#C5993A] to-[#D4872C] text-white font-semibold rounded-xl shadow-md active:scale-[0.98] transition-all disabled:opacity-40"
-              >
-                Salvar
-              </button>
-            )}
+              {/* Inputs de data e horário */}
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs text-slate-500 mb-1 block">Primeiro dia de serviço</label>
+                  <input type="date" value={primeiroPlantao} onChange={(e) => setPrimeiroPlantao(e.target.value)}
+                    className="w-full p-3 border border-slate-200 rounded-xl text-[#2C3E50] focus:outline-none focus:ring-2 focus:ring-[#C5993A]/30 focus:border-[#C5993A] transition-all bg-white" />
+                </div>
+                <div>
+                  <label className="text-xs text-slate-500 mb-1 block">Horário de entrada</label>
+                  <input type="time" value={horario} onChange={(e) => setHorario(e.target.value)}
+                    className="w-full p-3 border border-slate-200 rounded-xl text-[#2C3E50] focus:outline-none focus:ring-2 focus:ring-[#C5993A]/30 focus:border-[#C5993A] transition-all bg-white" />
+                </div>
+                <button
+                  onClick={handleSalvar}
+                  disabled={!escala || periodos.length === 0}
+                  className="w-full py-3 bg-gradient-to-r from-[#C5993A] to-[#D4872C] text-white font-semibold rounded-xl shadow-md active:scale-[0.98] transition-all disabled:opacity-40"
+                >
+                  Salvar
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -618,23 +669,28 @@ function TelaHome({
                 const hasExtra = extras.some(e => e.data === formatDate(dia.data))
 
                 let dayClass = ''
+                let bgClass  = ''
                 let showDot  = false
                 let dotColor = ''
 
                 if (!dia.isCurrentMonth) {
                   dayClass = 'text-slate-200'
                 } else if (hasExtra) {
-                  dayClass = 'bg-[#2C3E50] text-white font-semibold rounded-2xl'
+                  dayClass = 'text-white font-semibold'
+                  bgClass  = 'bg-[#2C3E50]'
                 } else if (dia.isPlantao && dia.isFeriado) {
-                  dayClass = 'bg-[#1B6B3A] text-white font-semibold rounded-2xl'
+                  dayClass = 'text-white font-semibold'
+                  bgClass  = 'bg-[#2E7D32]'
                   showDot  = true
                   dotColor = 'bg-white'
                 } else if (dia.isPlantao && dia.isFimDeSemana) {
-                  dayClass = 'bg-[#1B6B3A] text-white font-semibold rounded-2xl'
+                  dayClass = 'text-white font-semibold'
+                  bgClass  = 'bg-[#2E7D32]'
                 } else if (dia.isPlantao) {
-                  dayClass = 'bg-[#4CAF50] text-white font-semibold rounded-2xl'
+                  dayClass = 'text-white font-semibold'
+                  bgClass  = 'bg-[#4CAF50]'
                 } else if (dia.isFeriado) {
-                  dayClass = 'text-[#E91E63] font-semibold'
+                  dayClass = 'text-[#E91E63] font-medium'
                   showDot  = true
                   dotColor = 'bg-[#E91E63]'
                 } else if (dia.isFimDeSemana) {
@@ -643,9 +699,7 @@ function TelaHome({
                   dayClass = 'text-[#2C3E50]'
                 }
 
-                const todayRing = dia.isToday
-                  ? 'ring-2 ring-[#C5993A] ring-offset-2'
-                  : ''
+                const todayClass = dia.isToday ? 'ring-2 ring-[#C5993A] ring-offset-1' : ''
 
                 return (
                   <button
@@ -658,11 +712,17 @@ function TelaHome({
                     }}
                     disabled={!dia.isCurrentMonth}
                     title={dia.isFeriado ? dia.nomeFeriado : undefined}
-                    className={`aspect-square flex flex-col items-center justify-center text-sm relative transition-all duration-150 active:scale-90 ${dayClass} ${todayRing}`}
+                    className={`aspect-square flex flex-col items-center justify-center relative transition-all duration-150 active:scale-90 ${dayClass}`}
                   >
-                    {dia.dia}
+                    {bgClass && (
+                      <span className={`absolute w-8 h-8 rounded-full ${bgClass} ${todayClass} opacity-95`} />
+                    )}
+                    {!bgClass && dia.isToday && (
+                      <span className="absolute w-8 h-8 rounded-full ring-2 ring-[#C5993A] ring-offset-1" />
+                    )}
+                    <span className="relative z-10 text-sm">{dia.dia}</span>
                     {showDot && (
-                      <div className={`absolute bottom-1 w-1.5 h-1.5 rounded-full ${dotColor}`} />
+                      <div className={`absolute bottom-0.5 w-1 h-1 rounded-full ${dotColor} z-10`} />
                     )}
                   </button>
                 )
@@ -790,14 +850,13 @@ function ModalAdicionarExtra({
   onSave: (extra: ExtraServico) => void
   onDelete: (id: string) => void
 }) {
-  const [tipo,      setTipo]      = useState('Extra')
   const [descricao, setDescricao] = useState('')
   const [horas,     setHoras]     = useState('')
   const [valor,     setValor]     = useState('')
 
   if (!isOpen || !dia) return null
 
-  const tipos = ['Extra', 'Emergência', 'Segurança Particular', 'Plantão Especial', 'Cobertura', 'Outro']
+  const tipo = 'Extra'
 
   const diaKey = formatDate(dia.data)
   const extraExistente = extras.find(e => e.data === diaKey)
@@ -811,7 +870,6 @@ function ModalAdicionarExtra({
       horas: Number(horas) || 0,
       valor: Number(valor) || 0,
     })
-    setTipo('Extra')
     setDescricao('')
     setHoras('')
     setValor('')
@@ -856,29 +914,12 @@ function ModalAdicionarExtra({
             </div>
           )}
 
-          <label className="text-sm font-medium text-[#2C3E50] mb-2 block">Tipo de serviço</label>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {tipos.map(t => (
-              <button
-                key={t}
-                onClick={() => setTipo(t)}
-                className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-all ${
-                  tipo === t
-                    ? 'bg-[#2C3E50] text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-
           <label className="text-sm font-medium text-[#2C3E50] mb-2 block">Descrição (opcional)</label>
           <input
             type="text"
             value={descricao}
             onChange={(e) => setDescricao(e.target.value)}
-            placeholder="Ex: Cobertura do Sgt. Silva"
+            placeholder="Ex: Cobertura, segurança particular..."
             className="w-full p-3 border border-slate-200 rounded-xl text-[#2C3E50] mb-4 focus:outline-none focus:ring-2 focus:ring-[#C5993A]/30 focus:border-[#C5993A]"
           />
 
@@ -1452,25 +1493,48 @@ function TelaConfig({
               />
             </button>
           </div>
-          <p className="text-xs text-slate-400 mt-3 italic leading-relaxed">
-            As notificações usam a Web Notifications API. Ao publicar na Play Store via TWA/Capacitor,
-            será necessário configurar Firebase Cloud Messaging (FCM) para push notifications nativas.
-          </p>
         </div>
 
-        {/* Premium */}
-        <div className="bg-gradient-to-r from-[#2C3E50] to-[#34495E] rounded-2xl p-5 shadow-lg border border-white/5 relative overflow-hidden animate-fadeInUp" style={{ animationDelay: '0.15s' }}>
-          <div className="absolute top-0 right-0 w-24 h-24 bg-[#C5993A] opacity-[0.08] rounded-full blur-3xl" />
+        {/* Doação */}
+        <div className="bg-gradient-to-br from-[#2C3E50] to-[#34495E] rounded-2xl p-5 shadow-lg border border-white/5 relative overflow-hidden animate-fadeInUp" style={{ animationDelay: '0.15s' }}>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#C5993A] opacity-[0.06] rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#D4872C] opacity-[0.04] rounded-full blur-3xl" />
+
           <div className="flex items-center gap-3 mb-3 relative z-10">
-            <Crown className="w-6 h-6 text-[#C5993A]" />
-            <p className="font-bold text-white text-lg">ServGo Premium</p>
+            <div className="w-12 h-12 bg-gradient-to-br from-[#C5993A] to-[#D4872C] rounded-xl flex items-center justify-center shadow-lg shadow-amber-900/20">
+              <Heart className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <p className="font-bold text-white text-lg">Faça uma doação</p>
+              <p className="text-blue-200/60 text-xs">Ajude a manter o app gratuito</p>
+            </div>
           </div>
-          <p className="text-blue-200/70 text-sm mb-4 relative z-10">
-            Exportação PDF, backup na nuvem, widgets e muito mais.
+
+          <p className="text-blue-100/70 text-sm mb-4 leading-relaxed relative z-10">
+            O ServGo é e sempre será gratuito. Se ele te ajuda no dia a dia, considere fazer uma doação via Pix para apoiar o desenvolvimento.
           </p>
-          <button className="w-full py-3 bg-gradient-to-r from-[#C5993A] to-[#D4872C] text-white font-semibold rounded-xl shadow-lg active:scale-[0.98] transition-all relative z-10">
-            Em breve — R$ 9,99/mês
+
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 mb-4 border border-white/5 relative z-10">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-2 h-2 rounded-full bg-[#E91E63]" />
+              <p className="text-white/90 text-sm font-semibold">Compromisso social</p>
+            </div>
+            <p className="text-blue-200/70 text-xs leading-relaxed">
+              10% de todo valor arrecadado em doações será destinado a instituições de caridade que apoiam crianças com câncer. 💛
+            </p>
+          </div>
+
+          <button
+            onClick={() => alert('Em breve! O link para doação via Pix será adicionado em uma atualização futura.')}
+            className="w-full py-3.5 bg-gradient-to-r from-[#C5993A] to-[#D4872C] text-white font-semibold rounded-xl shadow-lg shadow-amber-900/20 active:scale-[0.98] transition-all relative z-10 flex items-center justify-center gap-2"
+          >
+            <Heart className="w-5 h-5" />
+            Doar via Pix
           </button>
+
+          <p className="text-center text-blue-200/40 text-xs mt-3 relative z-10">
+            Qualquer valor faz a diferença ❤️
+          </p>
         </div>
 
         {/* Resetar */}
