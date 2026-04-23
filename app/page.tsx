@@ -20,6 +20,7 @@ import {
   contarPlantoes,
   parseEscalaPersonalizada,
   isPlantao as isPlantaoFn,
+  getHorarioPlantao,
 } from '@/lib/escala-utils'
 
 const STORAGE_CONFIG     = 'servgo_config'
@@ -807,6 +808,7 @@ function TelaHome({
         isOpen={showExtraModal}
         onClose={() => { setShowExtraModal(false); setDiaSelecionado(null) }}
         dia={diaSelecionado}
+        config={config}
         extras={extras}
         onSave={(extra) => {
           onAddExtra(extra)
@@ -839,6 +841,7 @@ function ModalAdicionarExtra({
   isOpen,
   onClose,
   dia,
+  config,
   extras,
   onSave,
   onDelete,
@@ -846,6 +849,7 @@ function ModalAdicionarExtra({
   isOpen: boolean
   onClose: () => void
   dia: DiaCalendario | null
+  config: EscalaConfig | null
   extras: ExtraServico[]
   onSave: (extra: ExtraServico) => void
   onDelete: (id: string) => void
@@ -860,6 +864,7 @@ function ModalAdicionarExtra({
 
   const diaKey = formatDate(dia.data)
   const extraExistente = extras.find(e => e.data === diaKey)
+  const horarios = config ? getHorarioPlantao(dia.data, config) : []
 
   const handleSave = () => {
     onSave({
@@ -890,6 +895,27 @@ function ModalAdicionarExtra({
         <div className="px-5 pb-8">
           <h3 className="text-lg font-bold text-[#2C3E50] mb-1">Adicionar serviço extra</h3>
           <p className="text-sm text-slate-500 capitalize mb-5">{dataFormatada}</p>
+
+          {horarios.length > 0 ? (
+            <div className="bg-[#4CAF50]/10 border border-[#4CAF50]/20 rounded-xl px-4 py-3 mb-4">
+              <p className="text-xs text-[#2E7D32] font-semibold uppercase tracking-wide mb-1.5">Seu turno neste dia</p>
+              <div className="flex flex-wrap gap-2">
+                {horarios.map((bloco, idx) => (
+                  <div key={idx} className="flex items-center gap-1.5 bg-white rounded-lg px-3 py-1.5 shadow-sm">
+                    <div className="w-2 h-2 rounded-full bg-[#4CAF50]" />
+                    <span className="text-sm font-semibold text-[#2C3E50]">
+                      {String(bloco.inicio).padStart(2, '0')}:00 — {String(bloco.fim).padStart(2, '0')}:00
+                    </span>
+                    <span className="text-xs text-slate-400 ml-1">({bloco.fim - bloco.inicio}h)</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="bg-slate-100 rounded-xl px-4 py-3 mb-4">
+              <p className="text-sm text-slate-500">📋 Dia de folga — sem turno programado</p>
+            </div>
+          )}
 
           {dia.isFeriado && (
             <div className="bg-[#E91E63]/10 border border-[#E91E63]/20 rounded-xl px-3 py-2 mb-4">

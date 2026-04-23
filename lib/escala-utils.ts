@@ -4,26 +4,16 @@ import type { EscalaConfig, DiaCalendario, PeriodoEscala } from './types'
 import { isFeriado, isFimDeSemana } from './feriados'
 
 /**
- * Converte períodos em horas para array de dias com tipo
+ * Retorna os blocos contínuos de trabalho para um dia específico.
+ * Ex: [{ inicio: 7, fim: 19 }] para um plantão diurno 12h.
  */
-function gerarCicloDias(periodos: PeriodoEscala[]): Array<'trabalho' | 'folga'> {
-  const ciclo: Array<'trabalho' | 'folga'> = []
-  for (const periodo of periodos) {
-    const dias = Math.ceil(periodo.horas / 24)
-    for (let i = 0; i < dias; i++) {
-      ciclo.push(periodo.tipo)
-    }
-  }
-  return ciclo
-}
+export function getHorarioPlantao(data: Date, config: EscalaConfig): Array<{ inicio: number; fim: number }> {
+  const periodos = config.periodos
+  const cicloTotal = periodos.reduce((sum, p) => sum + p.horas, 0)
 
-/**
- * Calcula se uma data específica é dia de plantão
- */
-export function isPlantao(data: Date, config: EscalaConfig): boolean {
-  const cicloDias = gerarCicloDias(config.periodos)
-  const cicloTotal = cicloDias.length
-  if (cicloTotal === 0) return false
+  if (cicloTotal === 0) return []
+
+  const [horaInicio] = config.horarioInicio.split(':').map(Number)
 
   let primeiroPlantao: Date
   if (typeof config.primeiroPlantao === 'string') {
@@ -37,13 +27,52 @@ export function isPlantao(data: Date, config: EscalaConfig): boolean {
   const dataCheck = new Date(data)
   dataCheck.setHours(12, 0, 0, 0)
 
-  const diffTime = dataCheck.getTime() - primeiroPlantao.getTime()
-  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24))
+  const diffMs = dataCheck.getTime() - primeiroPlantao.getTime()
+  const diffDias = Math.round(diffMs / (1000 * 60 * 60 * 24))
+  const horasDesdeInicio = diffDias * 24 - horaInicio
 
-  let posicaoNoCiclo = diffDays % cicloTotal
-  if (posicaoNoCiclo < 0) posicaoNoCiclo += cicloTotal
+  // Mapear cada hora do dia: está em trabalho ou não
+  const horasTrabalho: boolean[] = []
+  for (let h = 0; h < 24; h++) {
+    const horaAbsoluta = horasDesdeInicio + h
+    let posicao = horaAbsoluta % cicloTotal
+    if (posicao < 0) posicao += cicloTotal
 
-  return cicloDias[posicaoNoCiclo] === 'trabalho'
+    let acumulado = 0
+    let emTrabalho = false
+    for (const periodo of periodos) {
+      if (posicao >= acumulado && posicao < acumulado + periodo.horas) {
+        emTrabalho = periodo.tipo === 'trabalho'
+        break
+      }
+      acumulado += periodo.horas
+    }
+    horasTrabalho.push(emTrabalho)
+  }
+
+  // Agrupar em blocos contínuos de trabalho
+  const blocos: Array<{ inicio: number; fim: number }> = []
+  let inicioBloco = -1
+
+  for (let h = 0; h <= 24; h++) {
+    if (h < 24 && horasTrabalho[h]) {
+      if (inicioBloco === -1) inicioBloco = h
+    } else {
+      if (inicioBloco !== -1) {
+        blocos.push({ inicio: inicioBloco, fim: h })
+        inicioBloco = -1
+      }
+    }
+  }
+
+  return blocos
+}
+
+/**
+ * Calcula se uma data específica é dia de plantão
+ */
+export function isPlantao(data: Date, config: EscalaConfig): boolean {
+  return getHorarioPlantao(data, config).length > 0
 }
 
 /**
