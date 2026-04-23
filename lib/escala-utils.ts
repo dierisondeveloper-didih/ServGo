@@ -15,42 +15,44 @@ export function getHorarioPlantao(data: Date, config: EscalaConfig): Array<{ ini
 
   const [horaInicio] = config.horarioInicio.split(':').map(Number)
 
-  let primeiroPlantao: Date
-  if (typeof config.primeiroPlantao === 'string') {
-    const parts = String(config.primeiroPlantao).split('T')[0].split('-')
-    primeiroPlantao = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]), 12, 0, 0)
-  } else {
-    primeiroPlantao = new Date(config.primeiroPlantao)
-    primeiroPlantao.setHours(12, 0, 0, 0)
-  }
+  const primeiroPlantao = new Date(config.primeiroPlantao)
+  primeiroPlantao.setHours(12, 0, 0, 0)
 
   const dataCheck = new Date(data)
   dataCheck.setHours(12, 0, 0, 0)
 
   const diffMs = dataCheck.getTime() - primeiroPlantao.getTime()
   const diffDias = Math.round(diffMs / (1000 * 60 * 60 * 24))
-  const horasDesdeInicio = diffDias * 24 - horaInicio
 
-  // Mapear cada hora do dia: está em trabalho ou não
-  const horasTrabalho: boolean[] = []
+  // O "dia de trabalho" do usuário vai de horaInicio até horaInicio+24
+  // Então checamos as 24 horas a partir do horário de entrada
+  const horasDesdeInicio = diffDias * 24
+
+  const horasTrabalho: boolean[] = new Array(24).fill(false)
+
   for (let h = 0; h < 24; h++) {
+    // h=0 corresponde ao horário de entrada (ex: 07:00)
+    // h=1 corresponde a 08:00, etc.
     const horaAbsoluta = horasDesdeInicio + h
+
     let posicao = horaAbsoluta % cicloTotal
     if (posicao < 0) posicao += cicloTotal
 
     let acumulado = 0
-    let emTrabalho = false
     for (const periodo of periodos) {
       if (posicao >= acumulado && posicao < acumulado + periodo.horas) {
-        emTrabalho = periodo.tipo === 'trabalho'
+        if (periodo.tipo === 'trabalho') {
+          // Converter de volta para hora do relógio
+          const horaRelogio = (horaInicio + h) % 24
+          horasTrabalho[horaRelogio] = true
+        }
         break
       }
       acumulado += periodo.horas
     }
-    horasTrabalho.push(emTrabalho)
   }
 
-  // Agrupar em blocos contínuos de trabalho
+  // Agrupar em blocos contínuos
   const blocos: Array<{ inicio: number; fim: number }> = []
   let inicioBloco = -1
 
